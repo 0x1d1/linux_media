@@ -8,6 +8,7 @@
 #include <linux/clk.h>
 #include <linux/interrupt.h>
 #include <linux/module.h>
+#include <linux/io.h>
 #include <linux/of_platform.h>
 #include <linux/reset.h>
 #include <media/rc-core.h>
@@ -438,7 +439,7 @@ static void mtk_ir_remove(struct platform_device *pdev)
 
 static struct platform_driver mtk_ir_driver = {
 	.probe          = mtk_ir_probe,
-	.remove_new     = mtk_ir_remove,
+	.remove     = mtk_ir_remove,
 	.driver = {
 		.name = MTK_IR_DEV,
 		.of_match_table = mtk_ir_match,

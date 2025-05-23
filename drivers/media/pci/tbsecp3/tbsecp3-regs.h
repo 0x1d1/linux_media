@@ -34,7 +34,9 @@
 #define TBSECP3_CA_BASE(_n)	(0x6000 + 0x1000 * _n)
 
 /* DMA */
-#define TBSECP3_DMA_BASE(_n)	(_n < 4) ? (0x8000 + 0x1000 * _n) : (0x8800 + 0x1000 * (_n - 4))
+//#define TBSECP3_DMA_BASE(_n)	(_n < 4) ? (0x8000 + 0x1000 * _n) : (0x8800 + 0x1000 * (_n - 4))
+#define TBSECP3_DMA_BASE(_n)	(_n<8)?((_n < 4) ? (0x8000 + 0x1000 * _n) : (0x8800 + 0x1000 * (_n - 4))):  \
+								((_n < 12) ? (0x8400 + 0x1000 *( _n - 8)) : (0x8C00 + 0x1000 * (_n - 12)))
 #define TBSECP3_DMA_STAT	0x0000
 #define TBSECP3_DMA_EN		0x0000
 #define TBSECP3_DMA_TSIZE	0x0004

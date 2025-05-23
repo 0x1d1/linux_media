@@ -760,7 +760,7 @@ static int saa716x_tbs6284_frontend_attach(struct saa716x_adapter *adapter, int 
 	}	
 	adapter->i2c_client_tuner = client;
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -868,7 +868,7 @@ static int saa716x_tbs6280_frontend_attach(struct saa716x_adapter *adapter, int 
 	}	
 	adapter->i2c_client_tuner = client;
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -939,7 +939,7 @@ static int saa716x_tbs6221_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2168_config.ts_mode = SI2168_TS_PARALLEL;
 	si2168_config.ts_clock_gapped = true;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2168", I2C_NAME_SIZE);
+	strscpy(info.type, "si2168", I2C_NAME_SIZE);
 	info.addr = 0x64;
 	info.platform_data = &si2168_config;
 	request_module(info.type);
@@ -958,7 +958,7 @@ static int saa716x_tbs6221_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2157_config.fe = adapter->fe;
 	si2157_config.if_port = 1;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+	strscpy(info.type, "si2157", I2C_NAME_SIZE);
 	info.addr = 0x60;
 	info.platform_data = &si2157_config;
 	request_module(info.type);
@@ -976,7 +976,7 @@ static int saa716x_tbs6221_frontend_attach(struct saa716x_adapter *adapter, int 
 	}
 	adapter->i2c_client_tuner = client;
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1061,7 +1061,7 @@ static int saa716x_tbs6281_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2168_config.ts_mode = SI2168_TS_PARALLEL;
 	si2168_config.ts_clock_gapped = true;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2168", I2C_NAME_SIZE);
+	strscpy(info.type, "si2168", I2C_NAME_SIZE);
 	info.addr = 0x64;
 	info.platform_data = &si2168_config;
 	request_module(info.type);
@@ -1080,7 +1080,7 @@ static int saa716x_tbs6281_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2157_config.fe = adapter->fe;
 	si2157_config.if_port = 1;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+	strscpy(info.type, "si2157", I2C_NAME_SIZE);
 	info.addr = 0x60;
 	info.platform_data = &si2157_config;
 	request_module(info.type);
@@ -1098,7 +1098,7 @@ static int saa716x_tbs6281_frontend_attach(struct saa716x_adapter *adapter, int 
 	}
 	adapter->i2c_client_tuner = client;
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1164,7 +1164,7 @@ static int saa716x_tbs6285_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2168_config.ts_clock_gapped = true;
 	si2168_config.ts_clock_inv = 1;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2168", I2C_NAME_SIZE);
+	strscpy(info.type, "si2168", I2C_NAME_SIZE);
 	info.addr = ((count == 0) || (count == 2)) ? 0x64 : 0x66;
 	info.platform_data = &si2168_config;
 	request_module(info.type);
@@ -1186,7 +1186,7 @@ static int saa716x_tbs6285_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2157_config.fe = adapter->fe;
 	si2157_config.if_port = 1;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+	strscpy(info.type, "si2157", I2C_NAME_SIZE);
 	info.addr = ((count == 0) || (count == 2)) ? 0x62 : 0x60;
 	info.platform_data = &si2157_config;
 	request_module(info.type);
@@ -1207,7 +1207,7 @@ static int saa716x_tbs6285_frontend_attach(struct saa716x_adapter *adapter, int 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
 		dev->config->model_name, count);
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	if (!saa716x_tbs_read_mac(dev,count,mac)) {
@@ -1299,7 +1299,7 @@ static int saa716x_tbs6220_frontend_attach(struct saa716x_adapter *adapter, int 
 	}	
 	adapter->i2c_client_tuner = client;
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1407,7 +1407,7 @@ static int saa716x_tbs6922_frontend_attach(
 		goto err;
 	}
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1509,7 +1509,7 @@ static int saa716x_tbs6923_frontend_attach(
 		goto err;
 	}
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1640,7 +1640,7 @@ static int tbs6925_frontend_attach(struct saa716x_adapter *adapter,
 	if (adapter->fe->ops.init)
 		adapter->fe->ops.init(adapter->fe);
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1786,7 +1786,7 @@ static int saa716x_tbs6982_frontend_attach(
 		goto err;
 	}
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -1931,7 +1931,7 @@ static int saa716x_tbs6982se_frontend_attach(
 		goto err;
 	}
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -2046,12 +2046,12 @@ static void tbs6984_lnb_pwr(struct dvb_frontend *fe, int pin, int onoff)
 		saa716x_gpio_write(dev, pin, 1);
 }
 
-void tbs6984_lnb_pwr0(struct dvb_frontend *fe, int demod, int onoff)
+static void tbs6984_lnb_pwr0(struct dvb_frontend *fe, int demod, int onoff)
 {
 	tbs6984_lnb_pwr(fe, (demod == 0) ? 19 : 2, onoff);
 }
 
-void tbs6984_lnb_pwr1(struct dvb_frontend *fe, int demod, int onoff)
+static void tbs6984_lnb_pwr1(struct dvb_frontend *fe, int demod, int onoff)
 {
 	tbs6984_lnb_pwr(fe, (demod == 0) ? 5 : 3, onoff);
 }
@@ -2112,7 +2112,7 @@ static int saa716x_tbs6984_frontend_attach(
 			"%s frontend %d doesn't seem to have a isl6422b on the i2c bus.\n",
 			dev->config->model_name, count);
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	if (!saa716x_tbs_read_mac(dev,count,mac)) {
@@ -2318,7 +2318,7 @@ static int saa716x_tbs6985_frontend_attach(struct saa716x_adapter *adapter, int 
 		dev_notice(&dev->pdev->dev, "%s MAC=%pM\n", dev->config->model_name, adapter->dvb_adapter.proposed_mac);
 	}
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	return 0;
@@ -2427,11 +2427,11 @@ static void tbs6991_lnb1_power(struct dvb_frontend *fe, int onoff)
 */
 #define TBS6991_TSMODE0	    (0x33)
 #define TBS6991_TSMODE1	    (0x31)
-#define TBS6991_TSMODE	    TBS6991_TSMODE0
+#define TBS6991_TSMODE	    TBS6991_TSMODE1
 static struct tas2101_config tbs6991_cfg[] = {
 	{
 		.i2c_address   = 0x68,
-		.id            = ID_TAS2101,
+		.id            = ID_TAS2100,
 		.reset_demod   = tbs6991_reset_fe0,
 		.lnb_power     = tbs6991_lnb0_power,
 		.init          = {0x10, 0x32, 0x54, 0x76, 0xa8, 0x9b, TBS6991_TSMODE},
@@ -2439,7 +2439,7 @@ static struct tas2101_config tbs6991_cfg[] = {
 	},
 	{
 		.i2c_address   = 0x68,
-		.id            = ID_TAS2101,
+		.id            = ID_TAS2100,
 		.reset_demod   = tbs6991_reset_fe1,
 		.lnb_power     = tbs6991_lnb1_power,
 		.init          = {0x30, 0x21, 0x54, 0x76, 0xb8, 0x9a, TBS6991_TSMODE},
@@ -2449,7 +2449,7 @@ static struct tas2101_config tbs6991_cfg[] = {
 
 static struct av201x_config tbs6991_av201x_cfg = {
 	.i2c_address = 0x63,
-	.id          = ID_AV2012,
+	.id          = ID_AV2011,
 	.xtal_freq   = 27000,		/* kHz */
 };
 
@@ -2488,7 +2488,7 @@ static int saa716x_tbs6991_frontend_attach(
 	if(!ret)
 		tbsci_init(adapter,count,2);
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -2552,6 +2552,12 @@ static struct tas2101_config tbs6991se_cfg[] = {
 	}
 };
 
+static struct av201x_config tbs6991se_av201x_cfg = {
+	.i2c_address = 0x63,
+	.id          = ID_AV2012,
+	.xtal_freq   = 27000,		/* kHz */
+};
+
 static int saa716x_tbs6991se_frontend_attach(
 	struct saa716x_adapter *adapter, int count)
 {
@@ -2569,7 +2575,7 @@ static int saa716x_tbs6991se_frontend_attach(
 	if (adapter->fe == NULL)
 		goto err;
 
-	if (dvb_attach(av201x_attach, adapter->fe, &tbs6991_av201x_cfg,
+	if (dvb_attach(av201x_attach, adapter->fe, &tbs6991se_av201x_cfg,
 			tas2101_get_i2c_adapter(adapter->fe, 2)) == NULL) {
 		dvb_frontend_detach(adapter->fe);
 		adapter->fe = NULL;
@@ -2588,7 +2594,7 @@ static int saa716x_tbs6991se_frontend_attach(
 	if(!ret)
 		tbsci_init(adapter,count,8);
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -2723,7 +2729,7 @@ static int saa716x_tbs6983_frontend_attach(struct saa716x_adapter *adapter, int 
 	adapter->fe->ops.set_voltage = saa716x_tbs6983_set_voltage;
 	saa716x_gpio_write(dev, count ? 2 : 3, 1); /* LNB power off */
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",
@@ -2784,7 +2790,7 @@ static int saa716x_tbs6290_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2168_config.ts_mode = SI2168_TS_PARALLEL;
 	si2168_config.ts_clock_gapped = true;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2168", I2C_NAME_SIZE);
+	strscpy(info.type, "si2168", I2C_NAME_SIZE);
 	info.addr = 0x64;
 	info.platform_data = &si2168_config;
 	request_module(info.type);
@@ -2803,7 +2809,7 @@ static int saa716x_tbs6290_frontend_attach(struct saa716x_adapter *adapter, int 
 	si2157_config.fe = adapter->fe;
 	si2157_config.if_port = 1;
 	memset(&info, 0, sizeof(struct i2c_board_info));
-	strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+	strscpy(info.type, "si2157", I2C_NAME_SIZE);
 	info.addr = 0x60;
 	info.platform_data = &si2157_config;
 	request_module(info.type);
@@ -2831,7 +2837,7 @@ static int saa716x_tbs6290_frontend_attach(struct saa716x_adapter *adapter, int 
 	if(!ret)
 		tbsci_init(adapter,count,9);
 
-	strlcpy(adapter->fe->ops.info.name,dev->config->model_name,52);
+	strscpy(adapter->fe->ops.info.name,dev->config->model_name,52);
 	strlcat(adapter->fe->ops.info.name,dev->config->dev_type,52);
 
 	dev_dbg(&dev->pdev->dev, "%s frontend %d attached\n",

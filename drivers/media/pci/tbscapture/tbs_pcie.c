@@ -1,5 +1,5 @@
 /*
-    TurboSight TBS PCIE DVB driver
+    TurboSight TBS PCIE HDMI/SDI capture driver
     Copyright (C) 2017 www.tbsdtv.com
 */
 
@@ -109,7 +109,7 @@ static int tbs_vidioc_enum_fmt_vid_cap(struct file *file, void *priv_fh,struct v
 {
 	switch (f->index) {
 	case 0:
-		strlcpy(f->description, "YUV 4:2:2", sizeof(f->description));
+		strscpy(f->description, "YUV 4:2:2", sizeof(f->description));
 		f->pixelformat = V4L2_PIX_FMT_UYVY;
 		break;
 	default:
@@ -617,7 +617,7 @@ static int tbs_i2c_init(struct tbs_pcie_dev *dev)
 		i2c_set_adapdata(adap, i2c);
 
 		/* TODO: replace X by I2C adapter number */
-		strlcpy(adap->name, "TBS PCIE I2C Adapter X", sizeof(adap->name));
+		strscpy(adap->name, "TBS PCIE I2C Adapter X", sizeof(adap->name));
 
 		adap->algo = &tbs_i2c_algo;
 		adap->algo_data = dev;
@@ -1713,7 +1713,7 @@ static __exit void pcie_tbs_exit(void)
 module_init(pcie_tbs_init);
 module_exit(pcie_tbs_exit);
 
-MODULE_DESCRIPTION("TBS PCIE driver");
+MODULE_DESCRIPTION("TBS PCIE HDMI/SDI capture driver");
 MODULE_AUTHOR("kernelcoding <wugang@kernelcoding.com>");
 MODULE_LICENSE("GPL");
 MODULE_VERSION("1.0");

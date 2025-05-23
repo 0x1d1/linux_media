@@ -18,6 +18,85 @@
 #include "tbsecp3.h"
 
 struct tbsecp3_board tbsecp3_boards[] = {
+	[TBSECP3_BOARD_TBS6916] = {
+		.board_id	= TBSECP3_BOARD_TBS6916,
+		.name		= "TurboSight TBS 6916 (Octa DVB-S/S2/S2X)",
+		.adapters	= 16,
+		.i2c_speed	= 39,
+		.eeprom_i2c	= 1,
+		.eeprom_addr	= 0x02,
+		.adap_config	= {
+			{
+				.ts_in = 0,
+				.i2c_bus_nr = 0,
+				.gpio.demod_reset.lvl = TBSECP3_GPIODEF_LOW,
+				.gpio.demod_reset.nr  = TBSECP3_GPIO_PIN(0, 0),
+			}, 
+			{
+				.ts_in = 1,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 2,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 3,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 4,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 5,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 6,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 7,
+				.i2c_bus_nr = 0,
+			},
+			{
+				.ts_in = 8,
+				.i2c_bus_nr = 1,
+				.gpio.demod_reset.lvl = TBSECP3_GPIODEF_LOW,
+				.gpio.demod_reset.nr  = TBSECP3_GPIO_PIN(1, 0),
+			}, 
+			{
+				.ts_in = 9,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 10,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 11,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 12,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 13,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 14,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 15,
+				.i2c_bus_nr = 1,
+			}
+
+		}
+	},
 	[TBSECP3_BOARD_TBS6590SE] = {
 		.board_id	= TBSECP3_BOARD_TBS6590SE,
 		.name		= "TurboSight TBS 6590SE DVB-S/S2/S2X/T/T2/C/C2 + 2xCI ",
@@ -62,9 +141,9 @@ struct tbsecp3_board tbsecp3_boards[] = {
 				.ts_in = 1,
 				.i2c_bus_nr = 0,
 				.gpio.lnb_power.lvl   = TBSECP3_GPIODEF_HIGH,
-				.gpio.lnb_power.nr    = TBSECP3_GPIO_PIN(2, 2),
+				.gpio.lnb_power.nr    = TBSECP3_GPIO_PIN(1, 2),
 				.gpio.lnb_voltage.lvl = TBSECP3_GPIODEF_HIGH,
-				.gpio.lnb_voltage.nr  = TBSECP3_GPIO_PIN(2, 1),				
+				.gpio.lnb_voltage.nr  = TBSECP3_GPIO_PIN(1, 1),				
 			},
 			{
 				.ts_in = 2,
@@ -722,6 +801,112 @@ struct tbsecp3_board tbsecp3_boards[] = {
 			}
 		}
 	},
+	[TBSECP3_BOARD_TBS6308X] = {
+			.board_id	= TBSECP3_BOARD_TBS6308X,
+			.name		= "TurboSight TBS 6308X 4K@30FPS HDMI PCIe Encoder",
+			.adapters	= 8,
+			.i2c_speed	= 39,
+			.eeprom_i2c	= 1,
+			.eeprom_addr	= 0x10,
+			.adap_config	= {
+				{
+					.ts_in = 0,
+					.i2c_bus_nr = 0,
+				}, 
+				{
+					.ts_in = 1,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 2,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 3,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 4,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 5,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 6,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 7,
+					.i2c_bus_nr = 0,
+
+				}
+			}
+		},
+	[TBSECP3_BOARD_TBS6312X] = {
+			.board_id	= TBSECP3_BOARD_TBS6312X,
+			.name		= "TurboSight TBS 6312X 4K@30FPS HDMI PCIe Encoder",
+			.adapters	= 12,
+			.i2c_speed	= 39,
+			.eeprom_i2c	= 1,
+			.eeprom_addr	= 0x10,
+			.adap_config	= {
+				{
+					.ts_in = 0,
+					.i2c_bus_nr = 0,
+				}, 
+				{
+					.ts_in = 1,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 2,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 3,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 4,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 5,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 6,
+					.i2c_bus_nr = 0,
+				},
+				{
+					.ts_in = 7,
+					.i2c_bus_nr = 0,
+
+				},
+				{
+					.ts_in = 8,
+					.i2c_bus_nr = 0,
+
+				},
+				{
+					.ts_in = 9,
+					.i2c_bus_nr = 0,
+
+				},
+				{
+					.ts_in = 10,
+					.i2c_bus_nr = 0,
+
+				},
+				{
+					.ts_in = 11,
+					.i2c_bus_nr = 0,
+
+				}
+			}
+		},
     // added by pzw in 2017,12,12
 	[TBSECP3_BOARD_TBS6304] = {
 		.board_id	= TBSECP3_BOARD_TBS6304,
@@ -803,7 +988,7 @@ struct tbsecp3_board tbsecp3_boards[] = {
 	},
 	[TBSECP3_BOARD_TBS6302X] = {
 		.board_id	= TBSECP3_BOARD_TBS6302X,
-		.name		= "TurboSight TBS 6302X HDMI Capture ",
+		.name		= "TurboSight TBS 6302X 4K@30FPS HDMI PCIe Encoder ",
 		.adapters	= 2,
 		.i2c_speed	= 39,
 		.eeprom_i2c	= 1,
@@ -835,9 +1020,26 @@ struct tbsecp3_board tbsecp3_boards[] = {
 			},
 		}
 	},
+	[TBSECP3_BOARD_TBS6302RV] = {
+		.board_id	= TBSECP3_BOARD_TBS6302RV,
+		.name		= "TurboSight TBS 6302SE 4K@30FPS HDMI Capture ",
+		.adapters	= 2,
+		.i2c_speed	= 39,
+		.eeprom_i2c	= 1,
+		.adap_config	= {
+			{
+				.ts_in = 0,
+				.i2c_bus_nr = 3,
+			},
+			{
+				.ts_in = 1,
+				.i2c_bus_nr = 2,
+			},
+		}
+	},
 	[TBSECP3_BOARD_TBS6304X] = {
 		.board_id	= TBSECP3_BOARD_TBS6304X,
-		.name		= "TurboSight TBS 6304X HDMI Capture ",
+		.name		= "TurboSight TBS 6304X 4K@30FPS HDMI PCIe Encoder ",
 		.adapters	= 4,
 		.i2c_speed	= 39,
 		.eeprom_i2c	= 1,
@@ -882,6 +1084,73 @@ struct tbsecp3_board tbsecp3_boards[] = {
 			{
 				.ts_in = 3,
 				.i2c_bus_nr = 0,
+			},
+		}
+	},
+	[TBSECP3_BOARD_TBS6304RV] = {
+		.board_id	= TBSECP3_BOARD_TBS6304RV,
+		.name		= "TurboSight TBS 6304SE 4K@30FPS HDMI Capture ",
+		.adapters	= 4,
+		.i2c_speed	= 39,
+		.eeprom_i2c	= 1,
+		.adap_config	= {
+			{
+				.ts_in = 0,
+				.i2c_bus_nr = 3,
+			},
+			{
+				.ts_in = 1,
+				.i2c_bus_nr = 2,
+			},
+			{
+				.ts_in = 2,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 3,
+				.i2c_bus_nr = 0,
+			},
+		}
+	},
+	[TBSECP3_BOARD_TBS6324] = {
+		.board_id	= TBSECP3_BOARD_TBS6324,
+		.name		= "TurboSight TBS 6324 3G-SDI PCIe Encoder ",
+		.adapters	= 4,
+		.i2c_speed	= 39,
+		.eeprom_i2c	= 1,
+		.adap_config	= {
+			{
+				.ts_in = 0,
+				.i2c_bus_nr = 3,
+			},
+			{
+				.ts_in = 1,
+				.i2c_bus_nr = 2,
+			},
+			{
+				.ts_in = 2,
+				.i2c_bus_nr = 1,
+			},
+			{
+				.ts_in = 3,
+				.i2c_bus_nr = 0,
+			},
+		}
+	},
+	[TBSECP3_BOARD_TBS6322] = {
+		.board_id	= TBSECP3_BOARD_TBS6322,
+		.name		= "TurboSight TBS 6322 3G-SDI PCIe Encoder ",
+		.adapters	= 2,
+		.i2c_speed	= 39,
+		.eeprom_i2c	= 1,
+		.adap_config	= {
+			{
+				.ts_in = 0,
+				.i2c_bus_nr = 3,
+			},
+			{
+				.ts_in = 1,
+				.i2c_bus_nr = 2,
 			},
 		}
 	},

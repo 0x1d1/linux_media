@@ -56,7 +56,7 @@ enum MT_FE_ROLL_OFF {
 	MtFeRollOff_Undef =
 	    0, MtFeRollOff_0p35, MtFeRollOff_0p25, MtFeRollOff_0p20,
 	    MtFeRollOff_0p15, MtFeRollOff_0p10, MtFeRollOff_0p05
-} MT_FE_ROLL_OFF;
+};
 
 enum MT_FE_SPECTRUM_MODE {
 	MtFeSpectrum_Undef = 0, MtFeSpectrum_Normal, MtFeSpectrum_Inversion
@@ -137,8 +137,10 @@ struct m88rs6060_cfg {
 	void (*read_properties)(struct i2c_adapter * i2c, u8 reg, u32 * buf);
 	void (*write_eeprom) (struct i2c_adapter *i2c,u8 reg, u8 buf);
 	void (*read_eeprom) (struct i2c_adapter *i2c,u8 reg, u8 *buf);
-	/*rf switch for 6590se*/
+	/*rf switch for 6590se 5590*/
 	void (*RF_switch)(struct i2c_adapter * i2c,u8 rf_in,u8 flag);
+	void (*TS_switch)(struct i2c_adapter * i2c,u8 flag);  //5590
+	void (*LED_switch)(struct i2c_adapter * i2c,u8 flag); //5590	
 };
 
 #endif

@@ -3118,7 +3118,10 @@ static irqreturn_t tbsmod_irq(int irq, void *dev_id)
 
 	stat = TBS_PCIE_READ(Int_adapter, 0); // clear total interrupts.
 	//stat16 = TBS_PCIE_READ(Int_adapter, 0x0c);
-	stat16 = TBS_PCIE_READ(Int_adapter, 0x18);
+	if(dev->cardid == 0x6032)
+		stat16 = TBS_PCIE_READ(Int_adapter, 0x18);
+	else
+		stat16 = 0;
 	TBS_PCIE_WRITE(Int_adapter, 0x04, 0x00000001);
 
 
@@ -3407,6 +3410,14 @@ static int tbsmod_probe(struct pci_dev *pdev,
 	break;
 	case 0x690b:
 		dev->cardid = 0x690b;
+		if(pdev->subsystem_device == 0x0001)
+			dev->mods_num =4;
+		else if(pdev->subsystem_device == 0x0020)
+			dev->mods_num = 2;
+		else if(pdev->subsystem_device == 0x0010)
+			dev->mods_num = 1;
+		else
+			printk("unknow card type!\n");
 	break;
 	case 0x6104:
 		dev->cardid = 0x6104;
@@ -3426,7 +3437,7 @@ static int tbsmod_probe(struct pci_dev *pdev,
 	break;
 	case 0x6032:
 		dev->cardid = 0x6032; 
-		if(pdev->subsystem_device == 0x008)
+		if(pdev->subsystem_device == 0x0008)
 			dev->mods_num = 8;
 		else if(pdev->subsystem_device == 0x0016)
 			dev->mods_num = 16;
@@ -3499,8 +3510,19 @@ static int tbsmod_probe(struct pci_dev *pdev,
 
 	case 0x690b:
 		mutex_lock(&dev->chip_lock);
-		printk("tbsmod%d:tbs690b asi card\n", dev->mod_index);
-		for(i=0;i<4;i++){
+		
+
+		if(pdev->subsystem_device == 0x0001)
+			printk("tbsmod%d: TBS690B ASI out\n", dev->mod_index);
+		else if(pdev->subsystem_device == 0x0020)
+			printk("tbsmod%d: TBS690B-Lite ASI out\n", dev->mod_index);
+		else if(pdev->subsystem_device == 0x0010)
+			printk("tbsmod%d: TBS690B-Lite ASI out\n", dev->mod_index);
+
+		mpbuf[0] = 0;//close IIC mask
+		TBS_PCIE_WRITE( Int_adapter, 0x08, *(u32 *)&mpbuf[0]);
+
+		for(i=0;i<dev->mods_num;i++){
 		mpbuf[0] = i; //0--3 :select value
 		TBS_PCIE_WRITE( MOD_ASI_BASEADDRESS, MOD_ASI_DEVICE, *(u32 *)&mpbuf[0]);
 
@@ -3575,6 +3597,8 @@ fail0:
 static const struct pci_device_id tbsmod_id_table[] = {
 	MAKE_ENTRY(0x544d, 0x6178, 0x6004, 0x0001, "tbs6004 dvbc card"),
 	MAKE_ENTRY(0x544d, 0x6178, 0x690b, 0x0001, "tbs690b asi card"),
+	MAKE_ENTRY(0x544d, 0x6178, 0x690b, 0x0010, "TBS690B-Lite asi card"),
+	MAKE_ENTRY(0x544d, 0x6178, 0x690b, 0x0020, "TBS690B-Lite asi card"),
 	MAKE_ENTRY(0x544d, 0x6178, 0x6104, 0x0001, "tbs6104 dvbt card"),
 	MAKE_ENTRY(0x544d, 0x6178, 0x6014, 0x0001, "tbs6014 qamb card"),
 	MAKE_ENTRY(0x544d, 0x6178, 0x6008, 0x0001, "tbs6008 dvbc card"),

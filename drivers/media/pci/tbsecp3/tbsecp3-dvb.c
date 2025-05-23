@@ -34,7 +34,9 @@
 #include "mxl603.h"
 
 #include "mtv23x.h"
+
 #include "gx1503.h"
+#include "r850.h"
 #include "tas2971.h"
 
 #include "stid135.h"
@@ -526,7 +528,7 @@ static int set_mac_address(struct tbsecp3_adapter *adap)
 
 	if (dev->info->eeprom_addr)
 		eep_addr = dev->info->eeprom_addr;
-	
+
 	eep_addr += 0x10 * adap->nr;
 	
 	ret = i2c_transfer(i2c, msg, 2);
@@ -1019,6 +1021,7 @@ static struct stid135_cfg tbs6903x_stid135_cfg = {
 	.set_TSsampling = NULL,
 	.set_TSparam = NULL,
 	.vglna = 0,
+	.control_22k = true,
 };
 
 static struct stid135_cfg tbs6909x_stid135_cfg = {
@@ -1033,6 +1036,7 @@ static struct stid135_cfg tbs6909x_stid135_cfg = {
 	.set_TSsampling = NULL,
 	.set_TSparam = NULL,
 	.vglna = 0,
+	.control_22k = true,
 	
 };
 static struct stid135_cfg tbs6903x_V2_stid135_cfg = {
@@ -1047,6 +1051,7 @@ static struct stid135_cfg tbs6903x_V2_stid135_cfg = {
 	.set_TSsampling = NULL,
 	.set_TSparam = NULL,
 	.vglna = 1,
+	.control_22k = true,
 };
 
 static struct stid135_cfg tbs6909x_V2_stid135_cfg = {
@@ -1061,6 +1066,7 @@ static struct stid135_cfg tbs6909x_V2_stid135_cfg = {
 	.set_TSsampling = NULL,
 	.set_TSparam = NULL,
 	.vglna = 2,
+	.control_22k = true,
 };
 
 static struct stid135_cfg tbs6912_stid135_cfg = {
@@ -1075,8 +1081,38 @@ static struct stid135_cfg tbs6912_stid135_cfg = {
 	.set_TSsampling = Set_TSsampling,
 	.set_TSparam = Set_TSparam,
 	.vglna = false,
+	.control_22k = true,
 };
 
+static struct stid135_cfg tbs6916_stid135_cfg[] = {
+{
+	.adr		= 0x68,
+	.clk		= 27,
+	.ts_mode	= TS_STFE,
+	.set_voltage	= max_set_voltage,
+	.write_properties = ecp3_spi_write, 
+	.read_properties = ecp3_spi_read,
+	.write_eeprom = ecp3_eeprom_write, 
+	.read_eeprom = ecp3_eeprom_read,
+	.set_TSsampling = NULL,
+	.set_TSparam = NULL,
+	.vglna   =false,
+	.control_22k = true,
+	},
+	{
+	.adr		= 0x68,
+	.clk		= 27,
+	.ts_mode	= TS_STFE,
+	.set_voltage	= max_set_voltage,
+	.write_properties = NULL, 
+	.read_properties = NULL,
+	.set_TSsampling = NULL,
+	.set_TSparam = NULL,
+	.vglna   =false,
+	.control_22k = false,
+	},
+	
+};
 static struct rda5816_config rda5816_cfg[] = {
 	{
 		.i2c_adr = 0x8,
@@ -1408,6 +1444,24 @@ static void tbs6590se_reset_demod(struct tbsecp3_adapter *adapter) //for the cxd
 	
 	return ;
 }
+static unsigned char  tbsecp3_get_hwver(struct tbsecp3_adapter *adapter) //for get the hardware version
+{
+	struct tbsecp3_dev *dev = adapter->dev;
+	u8 ver = 0;
+	u32 tmp = 0;
+	
+	tmp = tbs_read(TBSECP3_GPIO_BASE, 0x68);
+	ver = (u8) (tmp>>8)&0xff;
+	
+	return ver;	
+	
+}
+static struct r850_config r850_config={
+
+	 .i2c_address = 0x7C,
+	.R850_Xtal=24000,
+
+};
 static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 {
 	struct tbsecp3_dev *dev = adapter->dev;
@@ -1424,6 +1478,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 	struct i2c_board_info info;
 	struct i2c_adapter *i2c = &adapter->i2c->i2c_adap;
 	struct i2c_client *client_demod, *client_tuner;
+
 
 	adapter->fe = NULL;
 	adapter->fe2 = NULL;
@@ -1467,7 +1522,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		 m88rs6060_config.write_eeprom = ecp3_eeprom_write;
 		 m88rs6060_config.RF_switch = RF_switch; 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "m88rs6060", I2C_NAME_SIZE);
+		strscpy(info.type, "m88rs6060", I2C_NAME_SIZE);
 		info.addr = m88rs6060_config.demod_adr;
 		info.platform_data = &m88rs6060_config;
 		request_module(info.type);
@@ -1506,7 +1561,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		 m88rs6060_config.read_eeprom = ecp3_eeprom_read;
 		 m88rs6060_config.write_eeprom = ecp3_eeprom_write;
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "m88rs6060", I2C_NAME_SIZE);
+		strscpy(info.type, "m88rs6060", I2C_NAME_SIZE);
 		info.addr = m88rs6060_config.demod_adr;
 		info.platform_data = &m88rs6060_config;
 		request_module(info.type);
@@ -1555,7 +1610,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		 m88rs6060_config.read_eeprom = ecp3_eeprom_read;
 		 m88rs6060_config.write_eeprom = ecp3_eeprom_write;
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "m88rs6060", I2C_NAME_SIZE);
+		strscpy(info.type, "m88rs6060", I2C_NAME_SIZE);
 		info.addr = m88rs6060_config.demod_adr;
 		info.platform_data = &m88rs6060_config;
 		request_module(info.type);
@@ -1663,7 +1718,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		 m88rs6060_config.read_eeprom = ecp3_eeprom_read;
 		 m88rs6060_config.write_eeprom = ecp3_eeprom_write;
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "m88rs6060", I2C_NAME_SIZE);
+		strscpy(info.type, "m88rs6060", I2C_NAME_SIZE);
 		info.addr = m88rs6060_config.demod_adr;
 		info.platform_data = &m88rs6060_config;
 		request_module(info.type);
@@ -1699,7 +1754,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2183_config.write_properties = ecp3_spi_write;
 	
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2183", I2C_NAME_SIZE);
+		strscpy(info.type, "si2183", I2C_NAME_SIZE);
 		info.addr = (adapter->nr %2) ? 0x67 : 0x64;
 		si2183_config.agc_mode = (adapter->nr %2)? 0x5 : 0x4;
 		info.platform_data = &si2183_config;
@@ -1733,7 +1788,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2157_config.if_port = 1;
 	
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+		strscpy(info.type, "si2157", I2C_NAME_SIZE);
 		info.addr = (adapter->nr %2) ? 0x60 : 0x61;
 		info.platform_data = &si2157_config;
 		request_module(info.type);
@@ -1779,7 +1834,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2183_config.read_properties = ecp3_spi_read;
 		si2183_config.write_properties = ecp3_spi_write;
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2183", I2C_NAME_SIZE);
+		strscpy(info.type, "si2183", I2C_NAME_SIZE);
 
 		info.addr = (adapter->nr %2)? 0x64 : 0x67;
 		 si2183_config.agc_mode = (adapter->nr%2)? 0x4 : 0x5;
@@ -1833,7 +1888,18 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 				    tbs6308_read_mac_ext(adapter);//try again
 		    }
 		break;
-
+	case TBSECP3_BOARD_TBS6308X:
+		adapter->fe = dvb_attach(tas2971_attach, &tbs6308_demod_cfg, i2c);
+		if (adapter->fe == NULL)
+		    goto frontend_atach_fail;
+		  
+		break;
+	case TBSECP3_BOARD_TBS6312X:
+		adapter->fe = dvb_attach(tas2971_attach, &tbs6308_demod_cfg, i2c);
+		if (adapter->fe == NULL)
+		    goto frontend_atach_fail;
+		  
+		break;
 	case TBSECP3_BOARD_TBS6304:
 		adapter->fe = dvb_attach(tas2971_attach, &tbs6304_demod_cfg[adapter->nr], i2c);
 		if (adapter->fe == NULL)
@@ -1863,6 +1929,8 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		break;
 	case TBSECP3_BOARD_TBS6302X:
 	case TBSECP3_BOARD_TBS6302T:
+	case TBSECP3_BOARD_TBS6322:
+	case TBSECP3_BOARD_TBS6302RV:
 		adapter->fe = dvb_attach(tas2971_attach, &tbs6302se_demod_cfg[adapter->nr], i2c);
 		if (adapter->fe == NULL)
 		    goto frontend_atach_fail;
@@ -1870,6 +1938,8 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		break;
 	case TBSECP3_BOARD_TBS6304X:
 	case TBSECP3_BOARD_TBS6304T:
+	case TBSECP3_BOARD_TBS6324:
+	case TBSECP3_BOARD_TBS6304RV:
 		adapter->fe = dvb_attach(tas2971_attach, &tbs6304x_demod_cfg, i2c);
 		if (adapter->fe == NULL)
 		    goto frontend_atach_fail;
@@ -1907,15 +1977,29 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		break;
 
 	case TBSECP3_BOARD_TBS6514:
+	
 		memset(&gx1503_config,0,sizeof(gx1503_config));
+		unsigned char ver=tbsecp3_get_hwver(adapter);
+		if(ver==0x32){
+			dev->info->eeprom_i2c = 2;
+			if(adapter->nr==0)
+				set_mac_address(adapter);
+			}
+		 
+
 		gx1503_config.i2c_adapter =&i2c;
 		gx1503_config.fe = &adapter->fe;
 		gx1503_config.clk_freq = 30400;//KHZ
-		gx1503_config.ts_mode = 1;
+		if(ver==0x32)
+			gx1503_config.ts_config = 1;
+		else
+			gx1503_config.ts_config = 0;
+			
+		gx1503_config.ts_mode = 1;	
 		gx1503_config.i2c_wr_max = 8;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "gx1503", I2C_NAME_SIZE);
+		strscpy(info.type, "gx1503", I2C_NAME_SIZE);
 		info.addr = 0x30;
 		info.platform_data = &gx1503_config;
 		request_module(info.type);
@@ -1929,26 +2013,39 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		}
 
 		adapter->i2c_client_demod = client_demod;
-
-		/*attach tuner*/
-		memset(&si2157_config, 0, sizeof(si2157_config));
-		si2157_config.fe = adapter->fe;
-		si2157_config.if_port = 0;
-
-		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
-		info.addr = 0x60;
-		info.platform_data = &si2157_config;
-		request_module(info.type);
-		client_tuner = i2c_new_client_device(i2c, &info);
-		if (!i2c_client_has_driver(client_tuner))
+		
+		if(ver==0x32)
+		{
+			if (dvb_attach(r850_attach, adapter->fe, &r850_config,
+			i2c) == NULL) {
+		   	 dvb_frontend_detach(adapter->fe);
+		   	 adapter->fe = NULL;
+		   	 dev_err(&dev->pci_dev->dev,
+			    "frontend %d tuner attach failed\n",
+			    adapter->nr);
 		    goto frontend_atach_fail;
+			}
+		 }else{		
+			/*attach tuner*/
+			memset(&si2157_config, 0, sizeof(si2157_config));
+			si2157_config.fe = adapter->fe;
+			si2157_config.if_port = 0;
 
-		if (!try_module_get(client_tuner->dev.driver->owner)) {
-		    i2c_unregister_device(client_tuner);
-		    goto frontend_atach_fail;
+			memset(&info, 0, sizeof(struct i2c_board_info));
+			strscpy(info.type, "si2157", I2C_NAME_SIZE);
+			info.addr = 0x60;
+			info.platform_data = &si2157_config;
+			request_module(info.type);
+			client_tuner = i2c_new_client_device(i2c, &info);
+			if (!i2c_client_has_driver(client_tuner))
+			    goto frontend_atach_fail;
+
+			if (!try_module_get(client_tuner->dev.driver->owner)) {
+			    i2c_unregister_device(client_tuner);
+			    goto frontend_atach_fail;
+			}
+			adapter->i2c_client_tuner = client_tuner;
 		}
-		adapter->i2c_client_tuner = client_tuner;
 		break;
 
 	case TBSECP3_BOARD_TBS6814:
@@ -1959,7 +2056,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		mtv23x_config.i2c_wr_max = 32;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "mtv23x", I2C_NAME_SIZE);
+		strscpy(info.type, "mtv23x", I2C_NAME_SIZE);
 		info.addr = (adapter->nr%2)? 0x44 : 0x43;
 		info.platform_data = &mtv23x_config;
 		request_module(info.type);
@@ -1986,7 +2083,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2183_config.write_properties = ecp3_spi_write;
 			    
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2183", I2C_NAME_SIZE);
+		strscpy(info.type, "si2183", I2C_NAME_SIZE);
 		info.addr = (adapter->nr%2)? 0x67 : 0x64;
 		si2183_config.agc_mode = (adapter->nr%2)? 0x5 : 0x4;
 		info.platform_data = &si2183_config;
@@ -2014,7 +2111,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2157_config.if_port = 1;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+		strscpy(info.type, "si2157", I2C_NAME_SIZE);
 		info.addr = (adapter->nr %2)? 0x60 : 0x63;
 		info.platform_data = &si2157_config;
 		request_module(info.type);
@@ -2046,7 +2143,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2168_config.ts_clock_gapped = true;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2168", I2C_NAME_SIZE);
+		strscpy(info.type, "si2168", I2C_NAME_SIZE);
 		info.addr = 0x64;
 		info.platform_data = &si2168_config;
 		request_module(info.type);
@@ -2065,7 +2162,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2157_config.if_port = 1;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+		strscpy(info.type, "si2157", I2C_NAME_SIZE);
 		info.addr = 0x60;
 		info.platform_data = &si2157_config;
 		request_module(info.type);
@@ -2090,7 +2187,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2168_config.ts_clock_inv=0;//zc2016/07/20
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2168", I2C_NAME_SIZE);
+		strscpy(info.type, "si2168", I2C_NAME_SIZE);
 		info.addr = 0x64;
 		info.platform_data = &si2168_config;
 		request_module(info.type);
@@ -2109,7 +2206,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2157_config.if_port = 1;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+		strscpy(info.type, "si2157", I2C_NAME_SIZE);
 		info.addr = 0x60;
 		info.platform_data = &si2157_config;
 		request_module(info.type);
@@ -2139,7 +2236,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2183_config.write_properties = ecp3_spi_write;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2183", I2C_NAME_SIZE);
+		strscpy(info.type, "si2183", I2C_NAME_SIZE);
 		info.addr = (adapter->nr %2) ? 0x64 : 0x67;
 		si2183_config.agc_mode = (adapter->nr %2)? 0x4 : 0x5;
 		info.platform_data = &si2183_config;
@@ -2173,7 +2270,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2157_config.if_port = 1;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+		strscpy(info.type, "si2157", I2C_NAME_SIZE);
 		info.addr = (adapter->nr %2) ? 0x61 : 0x60;
 		info.platform_data = &si2157_config;
 		request_module(info.type);
@@ -2222,7 +2319,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2183_config.write_properties = ecp3_spi_write;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2183", I2C_NAME_SIZE);
+		strscpy(info.type, "si2183", I2C_NAME_SIZE);
 		if(pci->subsystem_vendor==0x6528)
 		{
 		    info.addr = 0x67;
@@ -2263,7 +2360,7 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		si2157_config.if_port = 1;
 
 		memset(&info, 0, sizeof(struct i2c_board_info));
-		strlcpy(info.type, "si2157", I2C_NAME_SIZE);
+		strscpy(info.type, "si2157", I2C_NAME_SIZE);
 		if(pci->subsystem_vendor==0x6528)info.addr = 0x61;
 		else
 		    info.addr = adapter->nr ? 0x61 : 0x60;
@@ -2455,7 +2552,20 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 
 		tbsecp3_ca_init(adapter, adapter->nr);
 		break;
+	case TBSECP3_BOARD_TBS6916:
 
+		if(adapter->nr<8)
+			adapter->fe = dvb_attach(stid135_attach, i2c,
+					&tbs6916_stid135_cfg[0], adapter->nr, adapter->nr/2);
+		else{
+		
+			adapter->nr -= 8;
+			adapter->fe = dvb_attach(stid135_attach, i2c,
+					&tbs6916_stid135_cfg[1], adapter->nr, adapter->nr/2);	
+		}
+	
+		if (adapter->fe == NULL)
+			goto frontend_atach_fail;
 	case TBSECP3_BOARD_TBS6909X:
 		if(pci->subsystem_device==0x0010)
 			adapter->fe = dvb_attach(stid135_attach, i2c,
@@ -2498,9 +2608,9 @@ static int tbsecp3_frontend_attach(struct tbsecp3_adapter *adapter)
 		return -ENODEV;
 		break;
 	}
-	strlcpy(adapter->fe->ops.info.name,dev->info->name,52);
+	strscpy(adapter->fe->ops.info.name,dev->info->name,52);
 	if (adapter->fe2)
-		strlcpy(adapter->fe2->ops.info.name,dev->info->name,52);
+		strscpy(adapter->fe2->ops.info.name,dev->info->name,52);
 	return 0;
 
 frontend_atach_fail:
