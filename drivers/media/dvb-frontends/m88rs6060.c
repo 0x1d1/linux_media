@@ -2688,10 +2688,17 @@ static int m88rs6060_read_status(struct dvb_frontend *fe,
 	m88rs6060_get_gain(dev, c->frequency / 1000, &gain);
 	c->strength.len = 2;
 	c->strength.stat[0].scale = FE_SCALE_DECIBEL;
-	c->strength.stat[0].svalue = -gain * 10;
+	c->strength.stat[0].svalue = (-gain * 10)+2790;
 
 	c->strength.stat[1].scale = FE_SCALE_RELATIVE;
-	c->strength.stat[1].svalue = (100 + (-gain / 100)) * 656;
+	if(gain>8500)
+		c->strength.stat[1].svalue = 0;   //no signal or weak signal  0%
+	else if(gain>6500)
+		c->strength.stat[1].svalue = (5+(8500-gain)*3/100)* 656; //weak signal
+	else if(gain>4500)
+		c->strength.stat[1].svalue = (65+(6500-gain)*3/200)*656; //normal signal
+	else 
+		c->strength.stat[1].svalue = (90+(4500-gain)/500)*656; //strong signal
 
 	c->cnr.len = 1;
 	c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
@@ -3160,7 +3167,7 @@ static int m88rs6060_tune(struct dvb_frontend *fe, bool re_tune,
 		unsigned int mode_flags,
 		unsigned int *delay, enum fe_status *status)
 {
-	//struct mxl *state = fe->demodulator_priv;
+
 	int r = 0;
 
 	*delay = HZ / 2;
@@ -3204,7 +3211,7 @@ static int m88rs6060_get_frontend(struct dvb_frontend *fe, struct dtv_frontend_p
         }
          switch(p_info.code_rate)
 		{
-			case MtFeCodeRate_1_4:		p->fec_inner = FEC_1_4;     	break;
+			case MtFeCodeRate_1_4:		p->fec_inner = FEC_1_4; break;
 			case MtFeCodeRate_1_3:		p->fec_inner = FEC_1_3;	break;
 			case MtFeCodeRate_2_5:		p->fec_inner = FEC_2_5;	break;
 			case MtFeCodeRate_1_2:		p->fec_inner = FEC_1_2;	break;
@@ -3213,6 +3220,7 @@ static int m88rs6060_get_frontend(struct dvb_frontend *fe, struct dtv_frontend_p
 			case MtFeCodeRate_3_4:		p->fec_inner = FEC_3_4;	break;
 			case MtFeCodeRate_4_5:		p->fec_inner = FEC_4_5;	break;
 			case MtFeCodeRate_5_6:		p->fec_inner = FEC_5_6;	break;
+			case MtFeCodeRate_7_8:          p->fec_inner = FEC_7_8; break;
 			case MtFeCodeRate_8_9:		p->fec_inner = FEC_8_9;	break;
 			case MtFeCodeRate_9_10:	p->fec_inner = FEC_9_10;	break;
 			case MtFeCodeRate_5_9:		p->fec_inner = FEC_5_9;	break;
